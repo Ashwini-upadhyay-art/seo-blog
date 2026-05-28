@@ -75,3 +75,7 @@ export const AD_SLOTS = {
 
 // Google Analytics 4 / Google Tag id, e.g. "G-XXXXXXXXXX". Optional.
 export const GA_MEASUREMENT_ID = "";
+
+// Google Search Console verification token (the `content` value from the
+// "HTML tag" method). Paste it here, redeploy, then click Verify in GSC.
+export const GOOGLE_SITE_VERIFICATION = "tD9LoIM4LyTjBkBTqHnvvjXNnFJ0he5hhTtdWU8IGZA";

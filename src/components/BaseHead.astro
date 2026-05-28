@@ -18,6 +18,7 @@ import {
   SOCIALS,
   GA_MEASUREMENT_ID,
   ADSENSE_CLIENT,
+  GOOGLE_SITE_VERIFICATION,
 } from "../consts";
 import { abs } from "../lib/url";
 
@@ -136,6 +137,11 @@ const schemas = [websiteSchema, orgSchema, ...(articleSchema ? [articleSchema] :
 <meta name="author" content={author} />
 {tags.length > 0 && <meta name="keywords" content={tags.join(", ")} />}
 <meta name="theme-color" content="#c2410c" />
+{
+  GOOGLE_SITE_VERIFICATION && (
+    <meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />
+  )
+}
 
 <!-- Open Graph -->
 <meta property="og:type" content={type} />
