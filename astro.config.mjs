@@ -3,14 +3,18 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
 
+import cloudflare from "@astrojs/cloudflare";
+
 // https://astro.build/config
 export default defineConfig({
   // IMPORTANT: set this to your real domain before deploying.
   // Must match SITE_URL in src/consts.ts. Used for canonical URLs,
   // sitemap, RSS and Open Graph tags.
   site: "https://seo-blog.ashwini-upadhy.workers.dev",
+
   output: "static",
   trailingSlash: "ignore",
+
   integrations: [
     mdx(),
     sitemap({
@@ -38,12 +42,16 @@ export default defineConfig({
       },
     }),
   ],
+
   build: {
     // Cleaner URLs: /blog/my-post/ instead of /blog/my-post.html
     format: "directory",
   },
+
   image: {
     // Allow optimizing remote images from these hosts (e.g. Unsplash).
     domains: ["images.unsplash.com"],
   },
+
+  adapter: cloudflare()
 });
