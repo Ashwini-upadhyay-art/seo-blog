@@ -8,7 +8,7 @@ export default defineConfig({
   // IMPORTANT: set this to your real domain before deploying.
   // Must match SITE_URL in src/consts.ts. Used for canonical URLs,
   // sitemap, RSS and Open Graph tags.
-  site: "https://your-blog.pages.dev",
+  site: "https://seo-blog.ashwini-upadhy.workers.dev",
   output: "static",
   trailingSlash: "ignore",
   integrations: [

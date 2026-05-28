@@ -7,7 +7,7 @@
  */
 
 // Your live domain. No trailing slash.
-export const SITE_URL = "https://your-blog.pages.dev";
+export const SITE_URL = "https://seo-blog.ashwini-upadhy.workers.dev";
 
 export const SITE_TITLE = "Wander & Well";
 export const SITE_TAGLINE = "Travel, food & slow-living stories worth the detour";

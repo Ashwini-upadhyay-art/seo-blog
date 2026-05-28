@@ -3,5 +3,4 @@ Allow: /
 
 # Block nothing by default. Add Disallow rules for admin/preview paths if needed.
 
-# Update the host below to your real domain after deploy.
-Sitemap: https://your-blog.pages.dev/sitemap-index.xml
+Sitemap: https://seo-blog.ashwini-upadhy.workers.dev/sitemap-index.xml
