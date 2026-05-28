@@ -30,14 +30,14 @@ export const AUTHOR = {
 // Social profiles — surfaced in the footer AND in sameAs[] structured data,
 // which helps Google build your knowledge graph / entity.
 export const SOCIALS = {
-  twitter: "https://twitter.com/yourhandle",
-  instagram: "https://instagram.com/yourhandle",
-  pinterest: "https://pinterest.com/yourhandle",
+  twitter: "",
+  instagram: "",
+  pinterest: "",
   youtube: "",
 };
 
 // Twitter @handle (without URL) for twitter:site / twitter:creator cards.
-export const TWITTER_HANDLE = "@yourhandle";
+export const TWITTER_HANDLE = "";
 
 // Top navigation links.
 export const NAV_LINKS = [
