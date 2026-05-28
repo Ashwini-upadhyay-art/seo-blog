@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { AUTHOR, SITE_TITLE, SOCIALS, CONTACT_EMAIL } from "../consts";
+import { abs } from "../lib/url";
+
+const sameAs = Object.values(SOCIALS).filter(Boolean);
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    mainEntity: {
+      "@type": "Person",
+      name: AUTHOR.name,
+      description: AUTHOR.bio,
+      image: abs(AUTHOR.avatar),
+      url: abs("/about"),
+      email: `mailto:${CONTACT_EMAIL}`,
+      sameAs,
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+      { "@type": "ListItem", position: 2, name: "About", item: abs("/about") },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  description={`Meet ${AUTHOR.name}, the writer behind ${SITE_TITLE}.`}
+  jsonLd={jsonLd}
+>
+  <article class="prose">
+    <h1>About {SITE_TITLE}</h1>
+    <p>{AUTHOR.bio}</p>
+    <p>
+      This is placeholder copy. Tell your story here — who you are, why you
+      started the blog, and what readers will get. A genuine, detailed About
+      page builds trust with readers <em>and</em> is one of the pages Google's
+      quality raters look at for E-E-A-T (Experience, Expertise,
+      Authoritativeness, Trust). It's also required for AdSense approval.
+    </p>
+    <h2>Get in touch</h2>
+    <p>
+      Questions, collaborations or press? Email
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. A reachable
+      contact method is another AdSense + trust requirement.
+    </p>
+  </article>
+</BaseLayout>

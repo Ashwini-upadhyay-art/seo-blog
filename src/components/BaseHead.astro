@@ -1,0 +1,234 @@
+---
+/**
+ * BaseHead — every SEO signal lives here.
+ *  - canonical URL (trailing-slash consistent with sitemap)
+ *  - Open Graph + Twitter cards (PNG images, with dimensions)
+ *  - JSON-LD: WebSite, Organization, BlogPosting (+ any page-supplied schema)
+ *  - sitemap + RSS discovery links, favicons, web manifest
+ *  - optional GA4 + AdSense
+ */
+import {
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  SITE_URL,
+  SITE_LANG,
+  SITE_LOCALE,
+  TWITTER_HANDLE,
+  AUTHOR,
+  SOCIALS,
+  GA_MEASUREMENT_ID,
+  ADSENSE_CLIENT,
+} from "../consts";
+import { abs } from "../lib/url";
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: "website" | "article";
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  tags?: string[];
+  /** BlogPosting.articleSection (the category). */
+  articleSection?: string;
+  /** Approx word count for BlogPosting.wordCount. */
+  wordCount?: number;
+  /** Extra JSON-LD objects (breadcrumb, recipe, FAQ, collection, etc.). */
+  jsonLd?: Record<string, unknown>[];
+  /** Set true on thin / utility pages you don't want indexed. */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  type = "website",
+  image,
+  imageAlt = SITE_TITLE,
+  publishedTime,
+  modifiedTime,
+  author = AUTHOR.name,
+  tags = [],
+  articleSection,
+  wordCount,
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const canonicalURL = abs(Astro.url.pathname);
+const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
+
+// OG image: page-supplied (e.g. post hero) → branded PNG default.
+// Must be an absolute URL and a real raster format (SVG won't render on social).
+const ogImage = abs(image ?? "/og-default.png");
+const logoUrl = abs("/og-default.png");
+
+// ---- JSON-LD: site-wide nodes ----
+const sameAs = Object.values(SOCIALS).filter(Boolean);
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_TITLE,
+  url: SITE_URL,
+  description: SITE_DESCRIPTION,
+  inLanguage: SITE_LANG,
+  publisher: { "@id": abs("/") + "#organization" },
+};
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": abs("/") + "#organization",
+  name: SITE_TITLE,
+  url: SITE_URL,
+  logo: { "@type": "ImageObject", url: logoUrl, width: 1200, height: 630 },
+  sameAs,
+};
+
+const articleSchema =
+  type === "article"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: title,
+        description,
+        image: ogImage,
+        url: canonicalURL,
+        datePublished: publishedTime?.toISOString(),
+        dateModified: (modifiedTime ?? publishedTime)?.toISOString(),
+        author: { "@type": "Person", name: author, url: abs("/about") },
+        publisher: { "@id": abs("/") + "#organization" },
+        mainEntityOfPage: { "@type": "WebPage", "@id": canonicalURL },
+        inLanguage: SITE_LANG,
+        ...(articleSection ? { articleSection } : {}),
+        ...(wordCount ? { wordCount } : {}),
+        ...(tags.length ? { keywords: tags.join(", ") } : {}),
+      }
+    : null;
+
+const schemas = [websiteSchema, orgSchema, ...(articleSchema ? [articleSchema] : []), ...jsonLd];
+---
+
+<!-- Essentials -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Crawl directives -->
+{
+  noindex ? (
+    <meta name="robots" content="noindex, nofollow" />
+  ) : (
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+  )
+}
+
+<!-- Primary meta -->
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={author} />
+{tags.length > 0 && <meta name="keywords" content={tags.join(", ")} />}
+<meta name="theme-color" content="#c2410c" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE_TITLE} />
+<meta property="og:title" content={title ?? SITE_TITLE} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content={SITE_LOCALE} />
+{
+  type === "article" && publishedTime && (
+    <meta property="article:published_time" content={publishedTime.toISOString()} />
+  )
+}
+{
+  type === "article" && modifiedTime && (
+    <meta property="article:modified_time" content={modifiedTime.toISOString()} />
+  )
+}
+{type === "article" && <meta property="article:author" content={author} />}
+{type === "article" && articleSection && (
+  <meta property="article:section" content={articleSection} />
+)}
+{
+  type === "article" &&
+    tags.map((tag) => <meta property="article:tag" content={tag} />)
+}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content={TWITTER_HANDLE} />
+<meta name="twitter:creator" content={TWITTER_HANDLE} />
+<meta name="twitter:title" content={title ?? SITE_TITLE} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<!-- Discovery -->
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={SITE_TITLE}
+  href={abs("/rss.xml")}
+/>
+
+<!-- Icons + manifest -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- Perf hints -->
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+{
+  ADSENSE_CLIENT && (
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+  )
+}
+
+<!-- Structured data -->
+{
+  schemas.map((s) => (
+    <script type="application/ld+json" set:html={JSON.stringify(s)} />
+  ))
+}
+
+<!-- Google Analytics 4 (loads only if configured) -->
+{
+  GA_MEASUREMENT_ID && (
+    <>
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+      />
+      <script
+        is:inline
+        set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`}
+      />
+    </>
+  )
+}
+
+<!-- Google AdSense loader (loads only if configured) -->
+{
+  ADSENSE_CLIENT && (
+    <script
+      async
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+      crossorigin="anonymous"
+    />
+  )
+}

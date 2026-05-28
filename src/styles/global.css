@@ -1,0 +1,429 @@
+/* ---------- Design tokens ---------- */
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+
+  --bg: #fefdfb;
+  --surface: #ffffff;
+  --text: #1d1c1a;
+  --muted: #6b675f;
+  --border: #ece8e1;
+  --accent: #c2410c; /* warm terracotta — travel/food friendly */
+  --accent-soft: #fff3ec;
+  --max-width: 720px;
+  --max-width-wide: 1080px;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark theme — applied only when <html data-theme="dark"> is set.
+   Default (no attribute) is light. The toggle lives in the header. */
+[data-theme="dark"] {
+  --bg: #16140f;
+  --surface: #201d17;
+  --text: #f3efe7;
+  --muted: #a8a194;
+  --border: #322d24;
+  --accent: #fb923c;
+  --accent-soft: rgba(251, 146, 60, 0.14);
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 1.05rem;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Layout ---------- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+.container-wide {
+  max-width: var(--max-width-wide);
+}
+main {
+  min-height: 60vh;
+  padding-block: 2.5rem 4rem;
+}
+
+/* ---------- Typography ---------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  line-height: 1.2;
+  font-weight: 700;
+  text-wrap: balance;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  margin-top: 2.2rem;
+  margin-bottom: 0.6rem;
+}
+h3 {
+  font-size: 1.35rem;
+  margin-top: 1.6rem;
+  margin-bottom: 0.4rem;
+}
+p {
+  margin-bottom: 1.1rem;
+}
+.muted {
+  color: var(--muted);
+}
+
+/* ---------- Header ---------- */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.site-header .bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.9rem;
+}
+.brand {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--text);
+}
+.brand:hover {
+  text-decoration: none;
+  color: var(--accent);
+}
+.nav {
+  display: flex;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+}
+.nav a {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.nav a:hover,
+.nav a[aria-current="page"] {
+  color: var(--accent);
+  text-decoration: none;
+}
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--text);
+  flex-shrink: 0;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+.theme-toggle .icon-sun {
+  display: none;
+}
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding-block: 2.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.site-footer .socials {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.6rem;
+}
+
+/* ---------- Post cards / grid ---------- */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.75rem;
+  margin-top: 2rem;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.card a {
+  color: inherit;
+}
+.card a:hover {
+  text-decoration: none;
+}
+.card .thumb {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  width: 100%;
+  background: var(--accent-soft);
+}
+.card .body {
+  padding: 1.1rem 1.2rem 1.3rem;
+}
+.card h3 {
+  margin: 0.4rem 0 0.4rem;
+  font-size: 1.2rem;
+}
+.card p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ---------- Badges / meta ---------- */
+.badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.post-meta {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0.4rem 0 1.4rem;
+}
+
+/* ---------- Article body ---------- */
+.prose {
+  font-size: 1.12rem;
+}
+.prose img {
+  border-radius: var(--radius);
+  margin-block: 1.6rem;
+}
+.prose blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  margin: 1.4rem 0;
+  color: var(--muted);
+  font-style: italic;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.4rem;
+  margin-bottom: 1.1rem;
+}
+.prose li {
+  margin-bottom: 0.4rem;
+}
+.prose pre {
+  background: #1e1b16;
+  color: #f3efe7;
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: 0.92rem;
+}
+.prose code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.hero-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius);
+  margin-bottom: 1.8rem;
+  box-shadow: var(--shadow);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+.btn:hover {
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+/* ---------- Hero (home) ---------- */
+.hero {
+  text-align: center;
+  padding-block: 2rem 1rem;
+}
+.hero p {
+  color: var(--muted);
+  font-size: 1.2rem;
+  max-width: 540px;
+  margin-inline: auto;
+}
+
+/* ---------- Ad slots ---------- */
+.ad-slot {
+  display: block;
+  margin-block: 2rem;
+  text-align: center;
+  min-height: 1px;
+}
+.ad-slot[data-label]::before {
+  content: "Advertisement";
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+/* ---------- Disclosure / sponsored ---------- */
+.disclosure {
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-radius: var(--radius);
+  padding: 0.8rem 1rem;
+  font-size: 0.9rem;
+  margin-bottom: 1.6rem;
+}
+
+/* ---------- FAQ ---------- */
+.faq {
+  margin-top: 2.5rem;
+}
+.faq details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.4rem 1rem;
+  margin-bottom: 0.7rem;
+  background: var(--surface);
+}
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.6rem 0;
+  list-style-position: inside;
+}
+.faq details[open] summary {
+  color: var(--accent);
+}
+.faq details p {
+  margin: 0 0 0.6rem;
+  color: var(--muted);
+}
+
+/* ---------- Related posts ---------- */
+.related {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Pagination ---------- */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  gap: 1rem;
+}
+
+/* ---------- Accessibility ---------- */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  z-index: 100;
+}
+.skip-link:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

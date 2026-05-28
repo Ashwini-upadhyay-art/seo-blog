@@ -1,0 +1,31 @@
+---
+import { SITE_TITLE, SITE_TAGLINE, SOCIALS } from "../consts";
+const year = new Date().getFullYear();
+const socialEntries = Object.entries(SOCIALS).filter(([, url]) => url);
+---
+
+<footer class="site-footer">
+  <div class="container container-wide">
+    <strong>{SITE_TITLE}</strong>
+    <p class="muted" style="margin:0.3rem 0 0;">{SITE_TAGLINE}</p>
+
+    {
+      socialEntries.length > 0 && (
+        <div class="socials">
+          {socialEntries.map(([name, url]) => (
+            <a href={url} rel="me noopener" target="_blank">
+              {name[0].toUpperCase() + name.slice(1)}
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <p class="muted" style="margin-top:1.2rem;">
+      &copy; {year} {SITE_TITLE}. &nbsp;
+      <a href="/privacy/">Privacy</a> &middot;
+      <a href="/rss.xml">RSS</a> &middot;
+      <a href="/sitemap-index.xml">Sitemap</a>
+    </p>
+  </div>
+</footer>

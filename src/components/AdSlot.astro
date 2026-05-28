@@ -1,0 +1,37 @@
+---
+/**
+ * AdSlot — Google AdSense unit that degrades gracefully.
+ *  - If ADSENSE_CLIENT is empty (dev / before approval) it renders nothing
+ *    visible, so it never hurts layout or Core Web Vitals.
+ *  - format="auto" + full-width-responsive lets AdSense pick the best size.
+ * Usage: <AdSlot slot={AD_SLOTS.inArticle} />
+ */
+import { ADSENSE_CLIENT } from "../consts";
+
+interface Props {
+  slot?: string;
+  format?: string;
+  /** Reserve height to avoid layout shift (CLS) once the ad loads. */
+  minHeight?: string;
+}
+const { slot, format = "auto", minHeight = "0px" } = Astro.props;
+const enabled = Boolean(ADSENSE_CLIENT && slot);
+---
+
+{
+  enabled && (
+    <aside class="ad-slot" data-label aria-hidden="true" style={`min-height:${minHeight}`}>
+      <ins
+        class="adsbygoogle"
+        style="display:block"
+        data-ad-client={ADSENSE_CLIENT}
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive="true"
+      />
+      <script is:inline>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </aside>
+  )
+}

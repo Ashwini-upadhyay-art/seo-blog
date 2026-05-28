@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { SITE_TITLE } from "../../consts";
+import { abs } from "../../lib/url";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const description =
+  "All travel guides, recipes and slow-living stories from " + SITE_TITLE + ".";
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Blog",
+    url: abs("/blog"),
+    description,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: posts.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: abs(`/blog/${p.id}`),
+      name: p.data.title,
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+      { "@type": "ListItem", position: 2, name: "Blog", item: abs("/blog") },
+    ],
+  },
+];
+---
+
+<BaseLayout wide title="Blog" description={description} jsonLd={jsonLd}>
+  <h1>The Blog</h1>
+  <p class="muted">Everything we've published — newest first.</p>
+
+  <div class="post-grid">
+    {
+      posts.map((post) => (
+        <PostCard
+          url={`/blog/${post.id}/`}
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          category={post.data.category}
+          heroImage={post.data.heroImage}
+          heroAlt={post.data.heroAlt}
+        />
+      ))
+    }
+  </div>
+</BaseLayout>

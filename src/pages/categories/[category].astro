@@ -1,0 +1,87 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { abs } from "../../lib/url";
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  const categories = [...new Set(posts.map((p) => p.data.category))];
+
+  return categories.map((category) => ({
+    params: { category: category.toLowerCase() },
+    props: {
+      category,
+      posts: posts
+        .filter((p) => p.data.category === category)
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { category, posts } = Astro.props;
+const slug = category.toLowerCase();
+const description = `Browse all ${slug} posts from Wander & Well.`;
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `${category} stories`,
+    url: abs(`/categories/${slug}`),
+    description,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: posts.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: abs(`/blog/${p.id}`),
+      name: p.data.title,
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+      { "@type": "ListItem", position: 2, name: "Blog", item: abs("/blog") },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: category,
+        item: abs(`/categories/${slug}`),
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  wide
+  title={`${category} stories`}
+  description={description}
+  jsonLd={jsonLd}
+>
+  <span class="badge">{category}</span>
+  <h1>{category}</h1>
+  <p class="muted">{posts.length} post{posts.length === 1 ? "" : "s"} in this category.</p>
+
+  <div class="post-grid">
+    {
+      posts.map((post) => (
+        <PostCard
+          url={`/blog/${post.id}/`}
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          category={post.data.category}
+          heroImage={post.data.heroImage}
+          heroAlt={post.data.heroAlt}
+        />
+      ))
+    }
+  </div>
+</BaseLayout>

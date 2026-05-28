@@ -1,0 +1,54 @@
+---
+import { SITE_LANG } from "../consts";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: "website" | "article";
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  tags?: string[];
+  articleSection?: string;
+  wordCount?: number;
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** Use the wider container (for grids/home). */
+  wide?: boolean;
+}
+const { wide = false, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE_LANG}>
+  <head>
+    <BaseHead {...head} />
+    <slot name="head" />
+    <!-- Applies saved dark theme before paint to avoid a flash. Default = light. -->
+    <script is:inline>
+      (function () {
+        try {
+          if (localStorage.getItem("theme") === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main">
+      <div class={wide ? "container container-wide" : "container"}>
+        <slot />
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

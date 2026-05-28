@@ -1,0 +1,62 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import AdSlot from "../components/AdSlot.astro";
+import { SITE_TAGLINE, AD_SLOTS } from "../consts";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const [featured, ...rest] = posts;
+---
+
+<BaseLayout wide>
+  <section class="hero">
+    <h1>Stories worth the detour</h1>
+    <p>{SITE_TAGLINE}</p>
+    <p style="margin-top:1.2rem;"><a class="btn" href="/blog/">Read the blog</a></p>
+  </section>
+
+  {
+    featured && (
+      <a href={`/blog/${featured.id}/`} class="card" style="display:block;margin-top:2rem;">
+        {featured.data.heroImage && (
+          <img
+            class="thumb"
+            src={featured.data.heroImage}
+            alt={featured.data.heroAlt || featured.data.title}
+            width="1080"
+            height="500"
+            style="aspect-ratio:21/9;"
+            fetchpriority="high"
+          />
+        )}
+        <div class="body">
+          <span class="badge">{featured.data.category}</span>
+          <h2 style="margin-top:0.5rem;">{featured.data.title}</h2>
+          <p class="muted">{featured.data.description}</p>
+        </div>
+      </a>
+    )
+  }
+
+  <AdSlot slot={AD_SLOTS.sidebar} minHeight="120px" />
+
+  <h2>Latest posts</h2>
+  <div class="post-grid">
+    {
+      rest.map((post) => (
+        <PostCard
+          url={`/blog/${post.id}/`}
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          category={post.data.category}
+          heroImage={post.data.heroImage}
+          heroAlt={post.data.heroAlt}
+        />
+      ))
+    }
+  </div>
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+  url: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  category: string;
+  heroImage?: string;
+  heroAlt?: string;
+}
+const { url, title, description, pubDate, category, heroImage, heroAlt } =
+  Astro.props;
+---
+
+<article class="card">
+  <a href={url}>
+    {
+      heroImage && (
+        <img
+          class="thumb"
+          src={heroImage}
+          alt={heroAlt || title}
+          loading="lazy"
+          decoding="async"
+          width="400"
+          height="225"
+        />
+      )
+    }
+    <div class="body">
+      <span class="badge">{category}</span>
+      <h3>{title}</h3>
+      <p>{description}</p>
+      <p class="muted" style="margin-top:0.6rem;font-size:0.85rem;">
+        <FormattedDate date={pubDate} />
+      </p>
+    </div>
+  </a>
+</article>

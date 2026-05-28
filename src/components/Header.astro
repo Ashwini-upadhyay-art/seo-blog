@@ -1,0 +1,28 @@
+---
+import { SITE_TITLE, NAV_LINKS } from "../consts";
+import ThemeToggle from "./ThemeToggle.astro";
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<header class="site-header">
+  <div class="container container-wide bar">
+    <a href="/" class="brand">{SITE_TITLE}</a>
+    <div class="nav-group">
+      <nav class="nav" aria-label="Primary">
+        {
+          NAV_LINKS.map((link) => {
+            const href = link.href.replace(/\/$/, "") || "/";
+            const isActive =
+              href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+            return (
+              <a href={link.href} aria-current={isActive ? "page" : undefined}>
+                {link.label}
+              </a>
+            );
+          })
+        }
+      </nav>
+      <ThemeToggle />
+    </div>
+  </div>
+</header>
